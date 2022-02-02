@@ -4,8 +4,7 @@ from airflow.models import BaseOperator
 from airflow.models import Variable
 from airflow.utils.decorators import apply_defaults
 
-from dpa.queries import staging_songs_table_copy, staging_logs_table_copy
-from dpa.queries import staging_songs_table_create, staging_logs_table_create
+from helpers import SqlQueries
 
 
 class RedshiftStagingOperator(BaseOperator):
@@ -55,9 +54,9 @@ class RedshiftStagingOperator(BaseOperator):
             db = PostgresHook(self.db_conn_id)
             self.log.info("Creating table if not exists.")
             if self.staging_type == "songs":
-                create_query = staging_songs_table_create(self.table)
+                create_query = SqlQueries.staging_songs_table_create(self.table)
             else:
-                create_query = staging_logs_table_create(self.table)
+                create_query = SqlQueries.staging_logs_table_create(self.table)
             db.run(create_query)
             if self.clean:
                 self.log.info("Cleaning table.")
@@ -81,9 +80,9 @@ class RedshiftStagingOperator(BaseOperator):
     @staticmethod
     def copy_table_songs(copy_table="", source=""):
         arn = Variable.get('redshift_iam_arn')
-        return staging_songs_table_copy(copy_table, source, arn)
+        return SqlQueries.staging_songs_table_copy(copy_table, source, arn)
 
     @staticmethod
     def copy_table_logs(copy_table="", source="", json_conf=""):
         arn = Variable.get('redshift_iam_arn')
-        return staging_logs_table_copy(copy_table, source, arn, json_conf)
+        return SqlQueries.staging_logs_table_copy(copy_table, source, arn, json_conf)

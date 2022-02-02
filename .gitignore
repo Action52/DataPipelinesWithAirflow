@@ -134,3 +134,16 @@ dmypy.json
 
 # Postgres
 postgres_data/
+/airflow/airflow.cfg
+/airflow/airflow.db
+/airflow/unittests.cfg
+/airflow/logs/
+/airflow/airflow-scheduler.err
+/airflow/airflow-scheduler.log
+/airflow/airflow-scheduler.out
+/airflow/airflow-scheduler.pid
+/airflow/airflow-webserver.err
+/airflow/airflow-webserver.log
+/airflow/airflow-webserver.out
+/airflow/airflow-webserver.pid
+/airflow/airflow-webserver-monitor.pid

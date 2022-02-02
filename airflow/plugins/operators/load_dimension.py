@@ -2,7 +2,7 @@ from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
-from dpa.queries import delete_table
+from helpers import SqlQueries
 
 
 class LoadDimensionOperator(BaseOperator):
@@ -43,7 +43,7 @@ class LoadDimensionOperator(BaseOperator):
             db = PostgresHook(self.db_conn_id)
             if self.delete_first:
                 self.log.info(f"Deleting table {self.table}.")
-                delete_query = delete_table(self.table)
+                delete_query = SqlQueries.delete_table(self.table)
                 db.run(delete_query)
                 self.log.info(f"Creating table {self.table}.")
                 create_query = self.create_func(self.table)

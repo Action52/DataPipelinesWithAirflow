@@ -1,12 +1,9 @@
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 
-from dpa.plugins.operators import RedshiftStagingOperator, LoadFactOperator, LoadDimensionOperator, DataQualityOperator
-from dpa.queries import dimension_artist_create, dimension_artist_insert
-from dpa.queries import dimension_song_create, dimension_song_insert
-from dpa.queries import dimension_time_create, dimension_time_insert
-from dpa.queries import dimension_user_create, dimension_user_insert
-from dpa.queries import data_quality_check_unique
+from operators import (RedshiftStagingOperator, LoadFactOperator, LoadDimensionOperator, DataQualityOperator)
+
+from helpers import SqlQueries
 
 import datetime
 
@@ -51,7 +48,6 @@ step_stage_songs_into_db = RedshiftStagingOperator(
     s3_bucket="udacity-dend",
     s3_key="song_data/",
     clean=False,
-    json_conf="s3://udacity-dend/log_json_path.json",
     staging_type="songs",
     skip=False
 )
@@ -94,8 +90,8 @@ step_create_and_populate_dim_time = LoadDimensionOperator(
     dag=dag,
     table=dimension_time,
     raw_table=staging_logs,
-    create_func=dimension_time_create,
-    insert_func=dimension_time_insert,
+    create_func=SqlQueries.dimension_time_create,
+    insert_func=SqlQueries.dimension_time_insert,
     skip=False,
     db_conn_id="redshift",
     delete_first=True
@@ -107,8 +103,8 @@ step_create_and_populate_dim_user = LoadDimensionOperator(
     dag=dag,
     table=dimension_user,
     raw_table=staging_logs,
-    create_func=dimension_user_create,
-    insert_func=dimension_user_insert,
+    create_func=SqlQueries.dimension_user_create,
+    insert_func=SqlQueries.dimension_user_insert,
     skip=False,
     db_conn_id="redshift",
     delete_first=True
@@ -120,8 +116,8 @@ step_create_and_populate_dim_artist = LoadDimensionOperator(
     dag=dag,
     table=dimension_artist,
     raw_table=staging_songs,
-    create_func=dimension_artist_create,
-    insert_func=dimension_artist_insert,
+    create_func=SqlQueries.dimension_artist_create,
+    insert_func=SqlQueries.dimension_artist_insert,
     delete_first=True,
     skip=False,
     db_conn_id="redshift"
@@ -133,8 +129,8 @@ step_create_and_populate_dim_song = LoadDimensionOperator(
     dag=dag,
     table=dimension_song,
     raw_table=staging_songs,
-    create_func=dimension_song_create,
-    insert_func=dimension_song_insert,
+    create_func=SqlQueries.dimension_song_create,
+    insert_func=SqlQueries.dimension_song_insert,
     delete_first=True,
     skip=False,
     db_conn_id="redshift",
@@ -154,7 +150,7 @@ step_data_quality = DataQualityOperator(
     dag=dag,
     dims=dims,
     db_conn_id="redshift",
-    test=data_quality_check_unique,
+    test=SqlQueries.data_quality_check_unique,
     retries=2,
     skip=False
 )

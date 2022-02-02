@@ -2,7 +2,7 @@ from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
-from dpa.queries import songplays_table_create, songplays_table_insert
+from helpers import SqlQueries
 
 
 class LoadFactOperator(BaseOperator):
@@ -39,10 +39,10 @@ class LoadFactOperator(BaseOperator):
         if not self.skip:
             db = PostgresHook(self.db_conn_id)
             self.log.info(f"Creating table {self.table}.")
-            create_query = songplays_table_create(self.table)
+            create_query = SqlQueries.songplays_table_create(self.table)
             db.run(create_query)
             self.log.info(f"Inserting data into facts table.")
-            insert_query = songplays_table_insert(self.table, self.raw_songs_table, self.raw_logs_table)
+            insert_query = SqlQueries.songplays_table_insert(self.table, self.raw_songs_table, self.raw_logs_table)
             db.run(insert_query)
         else:
             self.log.info(f"Skipping step after user selection.")
