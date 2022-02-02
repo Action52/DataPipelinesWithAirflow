@@ -1,4 +1,4 @@
-from airflow import DAG
+from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
 
 from operators import (RedshiftStagingOperator, LoadFactOperator, LoadDimensionOperator, DataQualityOperator)
