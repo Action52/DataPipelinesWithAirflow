@@ -13,4 +13,6 @@ pip install -e .
 - Add the connections and variables for the project in Airflow. The redshift conn should be named "redshift" and the aws
 one should be name "aws_credentials".
 
+- Please set an Airflow Variable called "redshift_iam_arn" with the ARN value of the redshift role.
+
 - Once set, you can run the airflow server, activate the sparkify DAG, and run it.
